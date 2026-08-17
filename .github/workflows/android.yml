@@ -19,19 +19,18 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Install Qt
+    - name: Install Qt & Android SDK
       uses: jurplel/install-qt-action@v4
       with:
         version: '6.5.3'
         target: 'android'
         arch: 'android_arm64_v8a'
+        setup-python: 'false'
 
-    - name: Build APK with Qt
+    - name: Build Project
       run: |
-        qt-cmake -B build -S . -G Ninja \
-          -DCMAKE_ANDROID_NDK=$ANDROID_NDK_LATEST_HOME \
-          -DCMAKE_ANDROID_SDK=$ANDROID_HOME
-        cmake --build build --target apk
+        qt-cmake -B build -S . -G Ninja
+        cmake --build build
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
