@@ -1,0 +1,38 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Setup Qt & Android SDK
+      uses: jurplel/install-qt-action@v3
+      with:
+        version: '6.5.3'
+        target: 'android'
+        arch: 'android_arm64_v8a'
+
+    - name: Build APK with Qt
+      run: |
+        qt-cmake -B build -S . -G Ninja
+        cmake --build build --target apk
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: appmusleh-apk
+        path: build/android-build/*.apk
