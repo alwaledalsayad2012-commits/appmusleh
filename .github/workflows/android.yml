@@ -25,15 +25,18 @@ jobs:
         version: '6.5.3'
         target: 'android'
         arch: 'android_arm64_v8a'
-        setup-python: 'false'
 
-    - name: Build Project
+    - name: Configure CMake
       run: |
-        qt-cmake -B build -S . -G Ninja
-        cmake --build build
+        qt-cmake -B build -S . -G Ninja \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DQT_ANDROID_BUILD_ALL_TARGETS=ON
+
+    - name: Build APK Target
+      run: cmake --build build --target appmusleh_prepare_apk_dir appmusleh_make_apk || cmake --build build --target apk
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: appmusleh-apk
-        path: build/android-build/*.apk
+        path: build/**/*.apk
